@@ -126,3 +126,123 @@ This will generate:
 which are used by subsequent scripts.
 
 ## 5. Aggregating Feature Importances Across Networks
+After running `explain_seal_gam_new.py` for all 27 networks (or any subset), you can aggregate the global feature importances:
+```bash
+cd src
+
+python export_ebm_importance_to_csv.py \
+  --search_dir . \
+  --pattern "*_ebm_estimate_*_importance_test.npz" \
+  --output_csv ebm_feature_importance_all.csv
+
+```
+Then you can:
+
+Generate the LaTeX table of mean/std importances and average ranks, and other analyses using:
+- `src/analyze_ebm_results.py`
+Example:
+```bash
+python analyze_ebm_results.py \
+  --result_dir . \
+  --split test \
+  --do_table
+
+```
+This prints a LaTeX table similar to Table 3 in the paper and saves it to `ebm_global_importance_stats_test.tex`.
+
+You can also:
+- Plot shape functions for selected features:
+```bash
+python analyze_ebm_results.py \
+  --result_dir . \
+  --split test \
+  --do_shapes \
+  --dataset_for_shapes Celegans \
+  --features_for_shapes sp_len Jaccard tri_uv deg_u
+```
+- Extract case-study examples:
+```bash
+python analyze_ebm_results.py \
+  --result_dir . \
+  --split test \
+  --do_cases \
+  --dataset_for_cases Celegans
+```
+## 6. Ensemble-Level PCA / t-SNE Visualisation
+
+To replicate the PCA and t-SNE embeddings of the mechanism signatures (Figure 4), use:
+- `src/ensemble_visualization.py`
+This script expects `ebm_feature_importance_all_wide.csv` (from `export_ebm_importance_to_csv.py`) and generates PCA and t-SNE plots coloured by network domain.
+```bash
+python ensemble_visualization.py
+```
+Outputs:
+- `ensemble_pca_label_long.pdf/png`
+- `ensemble_tsne_label_long.pdf/png`
+
+## 7. Scaling Relations (triangles vs clustering, degree vs heterogeneity)
+
+To generate the scaling plots (triangle importance vs global clustering, degree importance vs degree heterogeneity, cf. Figure 5), use:
+- `src/scaling_relations_long.py`
+- Alternatively, `src/compute_correlations.py` to compute and print Spearman/Pearson statistics.
+Both scripts require:
+- `ebm_feature_importance_all_wide.csv`
+- `network_stats.csv` containing per-network `Dataset`, `global_clustering`, `degree_std`, etc.
+Example:
+```bash
+python scaling_relations_long.py
+python compute_correlations.py
+```
+## 8. Degree-Preserving Randomisation Experiments
+To reproduce the randomisation experiments (Figure 6):
+1. Set your datasets and edge-path template in:
+  - `src/run_randomization_batch.py`
+2. Run batch randomisation:
+```bash
+python run_randomization_batch.py
+```
+This script:
+- Reads each network from `EDGE_PATH_TEMPLATE`;
+- Trains a Label–EBM on the original graph and on a degree-preserving randomised counterpart;
+- Saves feature importances and AUC/AP to `randomization_importances.csv`.
+3. Plot summarised results using:
+  - `src/plot_randomization_summary.py`
+```bash
+python plot_randomization_summary.py
+
+```
+This generates:
+- Per-dataset bar plots and line plots comparing original vs randomised feature importances.
+`randomization_experiment_simple.py` provides a minimal standalone example of the same idea for a single dataset.
+
+## 9. Decision Tree Surrogates for Rule Extraction
+To fit shallow decision trees that approximate SEAL’s outputs and extract human-readable if–then rules, use:
+- `src/explain_seal_tree.py`
+Example:
+```bash
+python explain_seal_tree.py \
+  --edge_path ../data/Celegans.txt \
+  --num_hops 2 \
+  --val_ratio 0.10 \
+  --test_ratio 0.20 \
+  --seed 12345 \
+  --model_dir ../models \
+  --model_name Celegans_model.pt \
+  --split test \
+  --batch_size 64 \
+  --max_samples 5000 \
+  --tree_max_depth 3 \
+  --tree_min_samples_leaf 50
+
+```
+This script outputs:
+- A text file FBK_seal_tree_rules.txt containing the decision tree rules;
+- Feature importances for the tree.
+These rules correspond to the qualitative case studies discussed in the paper.
+
+## 10. Reproducibility and Extensions
+- The repository contains all scripts used to generate the tables and figures in the paper.
+- By following the steps above (SEAL training → feature extraction → EBM/decision-tree training → aggregation and plotting), you should be able to reproduce all reported results.
+The surrogate-based analysis framework is model-agnostic and could in principle be applied to other subgraph-aware link prediction architectures (e.g., ELPH, BUDDY) by replacing the SEAL training stage and reusing the same structural feature extraction and surrogate fitting pipeline.
+
+If you have any questions or encounter issues running the code, please open an issue on this repository.
