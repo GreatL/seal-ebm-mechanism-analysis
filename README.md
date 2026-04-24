@@ -90,15 +90,15 @@ Once SEAL is trained and the cache file is available, you can extract structural
 This script:
 - Loads the SEAL cache and model;
 - For each subgraph in a given split (e.g. `test`), computes a 18-dimensional structural feature vector:
- - `n_sub`, `m_sub`, `avg_deg`, `avg_clust`
- - `deg_u`, `deg_v`, `deg_min`, `deg_max`, `deg_sum`, `deg_prod`
- - `CN`, `AA`, `RA`, `Jaccard`, `sp_len`, `tri_u`, `tri_v`, `tri_uv`
+ + `n_sub`, `m_sub`, `avg_deg`, `avg_clust`
+ + `deg_u`, `deg_v`, `deg_min`, `deg_max`, `deg_sum`, `deg_prod`
+ + `CN`, `AA`, `RA`, `Jaccard`, `sp_len`, `tri_u`, `tri_v`, `tri_uv`
 - Collects:
- - SEAL outputs (scores/probabilities);
- - ground-truth labels;
+ + SEAL outputs (scores/probabilities);
+ + ground-truth labels;
 - Trains:
- - `EBM_estimate_SEAL` (regressor) to approximate SEAL outputs;
- - `EBM_estimate_label` (classifier) to approximate ground-truth labels;
+ + `EBM_estimate_SEAL` (regressor) to approximate SEAL outputs;
+ + `EBM_estimate_label` (classifier) to approximate ground-truth labels;
 - Saves global explanations (shape functions and importance) and sample-level data in .npz files.
 
 Example:
