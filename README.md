@@ -243,6 +243,7 @@ These rules correspond to the qualitative case studies discussed in the paper.
 ## 10. Reproducibility and Extensions
 - The repository contains all scripts used to generate the tables and figures in the paper.
 - By following the steps above (SEAL training → feature extraction → EBM/decision-tree training → aggregation and plotting), you should be able to reproduce all reported results.
+
 The surrogate-based analysis framework is model-agnostic and could in principle be applied to other subgraph-aware link prediction architectures (e.g., ELPH, BUDDY) by replacing the SEAL training stage and reusing the same structural feature extraction and surrogate fitting pipeline.
 
 If you have any questions or encounter issues running the code, please open an issue on this repository.
