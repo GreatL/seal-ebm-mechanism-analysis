@@ -112,7 +112,7 @@ python explain_seal_gam_new.py \
   --test_ratio 0.20 \
   --seed 12345 \
   --model_dir ../models \
-  --model_name FBK_model.pt \
+  --model_name Celegans_model.pt \
   --split test \
   --batch_size 64 \
   --max_samples 5000 \
@@ -236,7 +236,7 @@ python explain_seal_tree.py \
 
 ```
 This script outputs:
-- A text file FBK_seal_tree_rules.txt containing the decision tree rules;
+- A text file Celegans_seal_tree_rules.txt containing the decision tree rules;
 - Feature importances for the tree.
 These rules correspond to the qualitative case studies discussed in the paper.
 
