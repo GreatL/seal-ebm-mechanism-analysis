@@ -7,7 +7,7 @@ Code for the paper:
 
 This repository contains the code used to train the SEAL link prediction model, extract structural features on enclosing subgraphs, fit global surrogate models (EBMs and decision trees), and perform ensemble-level analyses of link formation mechanisms across 27 real-world networks.
 
-The code is organised as a set of scripts that reproduce the main steps and figures in the paper.
+The code is organised as a set of scripts that reproduce the main steps and results in the paper.
 
 ---
 
